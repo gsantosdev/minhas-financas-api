@@ -17,6 +17,9 @@ public class Usuario {
 
     private String email;
 
+
+    private String senha;
+
     @Override
     public String toString() {
         return "Usuario{" +
@@ -72,8 +75,7 @@ public class Usuario {
         this.senha = senha;
     }
 
-    @Column(name = "senha")
-    private String senha;
+
 
 
 }
