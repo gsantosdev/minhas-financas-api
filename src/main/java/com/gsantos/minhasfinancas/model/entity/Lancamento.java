@@ -1,5 +1,7 @@
 package com.gsantos.minhasfinancas.model.entity;
 
+import com.gsantos.minhasfinancas.model.enums.StatusLancamento;
+import com.gsantos.minhasfinancas.model.enums.TipoLancamento;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
