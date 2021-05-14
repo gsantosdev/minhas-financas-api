@@ -1,5 +1,6 @@
 package com.gsantos.minhasfinancas.service.impl;
 
+import com.gsantos.minhasfinancas.exception.RegraNegocioException;
 import com.gsantos.minhasfinancas.model.entity.Usuario;
 import com.gsantos.minhasfinancas.model.repository.UsuarioRepository;
 import com.gsantos.minhasfinancas.service.UsuarioService;
@@ -26,6 +27,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public void validarEmail(String email) {
+
+        if (repository.existsByEmail(email)) {
+            throw new RegraNegocioException("Já existe um usuário cadastrado com este email.");
+        }
 
     }
 }
