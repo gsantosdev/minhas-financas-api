@@ -2,7 +2,6 @@ package com.gsantos.minhasfinancas.service;
 
 import com.gsantos.minhasfinancas.model.entity.Usuario;
 
-
 public interface UsuarioService {
 
     Usuario autenticar(String email, String senha);

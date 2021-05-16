@@ -12,11 +12,15 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-//@DataJpaTest
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UsuarioRepositoryTest {
 
     @Autowired
@@ -28,7 +32,7 @@ public class UsuarioRepositoryTest {
     @Test
     public void deveVerificarExistenciaDeEmail() {
         //cenário
-        Usuario usuario = Usuario.builder().nome("usuario").email("usuario@email.com").build();
+        Usuario usuario = criarUsuario();
         entityManager.persist(usuario);
 
         //ação / execução
@@ -47,5 +51,53 @@ public class UsuarioRepositoryTest {
         //verificacao
         Assertions.assertThat(result).isFalse();
     }
+
+
+
+    @Test
+    public void devePersistirUmUsuarioNaBaseDeDados() {
+        //cenário
+        Usuario usuario = Usuario
+                .builder()
+                .nome("usuario")
+                .email("usuario@email.com")
+                .senha("senha")
+                .build();
+
+        Usuario usuarioSalvo = repository.save(usuario);
+
+        assertThat(usuarioSalvo.getId()).isNotNull();
+    }
+
+    @Test
+    public void deveBuscarUmUsuarioPorEmail() {
+        //cenario
+        Usuario usuario = criarUsuario();
+        entityManager.persist(usuario);
+
+        //verificacao
+        Optional<Usuario> result = repository.findByEmail("usuario@email.com");
+        assertThat(result.isPresent()).isTrue();
+
+    }
+
+    @Test
+    public void deveRetornarVazioAoBuscarUsuarioPorEmail() {
+
+        //verificacao
+        Optional<Usuario> result = repository.findByEmail("usuario@email.com");
+        assertThat(result.isPresent()).isFalse();
+
+    }
+
+    private Usuario criarUsuario() {
+        return Usuario
+                .builder()
+                .nome("usuario")
+                .email("usuario@email.com")
+                .senha("senha")
+                .build();
+    }
+
 
 }
