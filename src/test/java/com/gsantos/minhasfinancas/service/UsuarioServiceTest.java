@@ -1,10 +1,12 @@
 package com.gsantos.minhasfinancas.service;
 
 
+import com.gsantos.minhasfinancas.exception.ErroAutenticacao;
 import com.gsantos.minhasfinancas.exception.RegraNegocioException;
 import com.gsantos.minhasfinancas.model.entity.Usuario;
 import com.gsantos.minhasfinancas.model.repository.UsuarioRepository;
 import com.gsantos.minhasfinancas.service.impl.UsuarioServiceImpl;
+import org.checkerframework.checker.nullness.Opt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,8 +41,6 @@ public class UsuarioServiceTest {
     @BeforeEach
     public void setUp() {
         service = new UsuarioServiceImpl(repository);
-
-
     }
 
 
@@ -57,6 +57,35 @@ public class UsuarioServiceTest {
             //verificacao
             assertThat(result).isNotNull();
         });
+    }
+
+    @Test
+    public void deveLancarErroQuandoNaoEncontrarUsuarioCadastradoComOEmailInformado() {
+
+        //cenário
+        Mockito.when(repository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+
+        //acao
+        Throwable exception = org.assertj.core.api.Assertions.catchThrowable(() -> {
+            service.autenticar(EMAIL, SENHA);
+        });
+        //verificacao
+        assertThat(exception).isInstanceOf(ErroAutenticacao.class).hasMessage("Usuario não encontrado para o email informado.");
+
+    }
+
+    @Test
+    public void deveLancarErroQuandoSenhaNaoBater() {
+
+        //cenário
+        Usuario usuario = Usuario.builder().email(EMAIL).senha(SENHA).build();
+        Mockito.when(repository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(usuario));
+        //acao
+        Throwable exception = org.assertj.core.api.Assertions.catchThrowable(() -> {
+            service.autenticar(EMAIL, "123");
+        });
+        assertThat(exception).isInstanceOf(ErroAutenticacao.class).hasMessage("Senha inválida.");
+
     }
 
     @Test
