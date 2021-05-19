@@ -92,7 +92,6 @@ public class UsuarioServiceTest {
     public void deveValidarEmail() {
         Assertions.assertDoesNotThrow(() -> {
 
-
             //cenario
             Mockito.when(repository.existsByEmail(Mockito.anyString())).thenReturn(false);
 
