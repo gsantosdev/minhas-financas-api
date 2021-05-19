@@ -53,7 +53,6 @@ public class UsuarioRepositoryTest {
     }
 
 
-
     @Test
     public void devePersistirUmUsuarioNaBaseDeDados() {
         //cenário

@@ -1,8 +1,8 @@
 package com.gsantos.minhasfinancas.exception;
 
-public class ErroAutenticacao extends RuntimeException{
+public class ErroAutenticacao extends RuntimeException {
 
-    public ErroAutenticacao(String msg){
+    public ErroAutenticacao(String msg) {
         super(msg);
     }
 
