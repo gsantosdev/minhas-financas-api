@@ -1,13 +1,13 @@
 package com.gsantos.minhasfinancas.api.resource;
 
 import com.gsantos.minhasfinancas.api.dto.UsuarioDTO;
+import com.gsantos.minhasfinancas.exception.ErroAutenticacao;
 import com.gsantos.minhasfinancas.exception.RegraNegocioException;
 import com.gsantos.minhasfinancas.model.entity.Usuario;
 import com.gsantos.minhasfinancas.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +24,19 @@ public class UsuarioResource {
         this.service = service;
     }
 
+    @PostMapping("/autenticar")
+    public ResponseEntity autenticar(@RequestBody UsuarioDTO dto) {
+
+        try {
+            Usuario usuarioAutenticado = service.autenticar(dto.getEmail(), dto.getSenha());
+            return ResponseEntity.ok().body(usuarioAutenticado);
+        } catch (ErroAutenticacao e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+
+    }
+
     @PostMapping
     public ResponseEntity salvar(@RequestBody UsuarioDTO dto) {
 
@@ -32,9 +45,7 @@ public class UsuarioResource {
         try {
             Usuario usuarioSalvo = service.salvarUsuario(usuario);
             return new ResponseEntity(usuarioSalvo, HttpStatus.CREATED);
-        }
-        catch (RegraNegocioException e)
-        {
+        } catch (RegraNegocioException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
