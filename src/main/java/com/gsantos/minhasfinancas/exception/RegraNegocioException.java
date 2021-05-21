@@ -1,9 +1,8 @@
 package com.gsantos.minhasfinancas.exception;
 
-public class RegraNegocioException extends RuntimeException{
+public class RegraNegocioException extends RuntimeException {
 
-    public RegraNegocioException(String msg)
-    {
+    public RegraNegocioException(String msg) {
         super(msg);
     }
 }

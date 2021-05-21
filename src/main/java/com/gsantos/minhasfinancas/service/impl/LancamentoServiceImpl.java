@@ -66,27 +66,27 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Override
     public void validar(Lancamento lancamento) {
 
-        if(lancamento.getDecricao() == null || lancamento.getDecricao().trim().equals("")){
+        if (lancamento.getDecricao() == null || lancamento.getDecricao().trim().equals("")) {
             throw new RegraNegocioException("Informe uma descrição válida.");
         }
 
-        if(lancamento.getMes() == null || lancamento.getMes() < 1 || lancamento.getMes() > 12){
+        if (lancamento.getMes() == null || lancamento.getMes() < 1 || lancamento.getMes() > 12) {
             throw new RegraNegocioException("Informe um Mês válido.");
         }
 
-        if(lancamento.getAno() == null || lancamento.getAno().toString().length() != 4){
+        if (lancamento.getAno() == null || lancamento.getAno().toString().length() != 4) {
             throw new RegraNegocioException("Informe um Ano válido.");
         }
 
-        if (lancamento.getUsuario() == null || lancamento.getUsuario().getId() == null){
+        if (lancamento.getUsuario() == null || lancamento.getUsuario().getId() == null) {
             throw new RegraNegocioException("Informe um usuário.");
         }
 
-        if (lancamento.getValor() == null || lancamento.getValor().compareTo(BigDecimal.ZERO) < 1){
+        if (lancamento.getValor() == null || lancamento.getValor().compareTo(BigDecimal.ZERO) < 1) {
             throw new RegraNegocioException("Informe um valor válido.");
         }
 
-        if(lancamento.getTipo() == null){
+        if (lancamento.getTipo() == null) {
             throw new RegraNegocioException("Informe um tipo de lançamento.");
         }
     }
