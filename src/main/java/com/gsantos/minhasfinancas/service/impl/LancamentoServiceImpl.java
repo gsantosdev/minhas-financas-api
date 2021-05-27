@@ -5,6 +5,7 @@ import com.gsantos.minhasfinancas.model.entity.Lancamento;
 import com.gsantos.minhasfinancas.model.enums.StatusLancamento;
 import com.gsantos.minhasfinancas.model.repository.LancamentoRepository;
 import com.gsantos.minhasfinancas.service.LancamentoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class LancamentoServiceImpl implements LancamentoService {
 
-    private LancamentoRepository repository;
-
-    public LancamentoServiceImpl(LancamentoRepository repository) {
-        this.repository = repository;
-    }
+    private final LancamentoRepository repository;
 
     @Override
     @Transactional
@@ -67,7 +65,7 @@ public class LancamentoServiceImpl implements LancamentoService {
     @Override
     public void validar(Lancamento lancamento) {
 
-        if (lancamento.getDecricao() == null || lancamento.getDecricao().trim().equals("")) {
+        if (lancamento.getDescricao() == null || lancamento.getDescricao().trim().equals("")) {
             throw new RegraNegocioException("Informe uma descrição válida.");
         }
 
@@ -90,6 +88,7 @@ public class LancamentoServiceImpl implements LancamentoService {
         if (lancamento.getTipo() == null) {
             throw new RegraNegocioException("Informe um tipo de lançamento.");
         }
+
     }
 
     @Override

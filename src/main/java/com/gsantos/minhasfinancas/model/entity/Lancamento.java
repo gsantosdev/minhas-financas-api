@@ -33,7 +33,7 @@ public class Lancamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String decricao;
+    private String descricao;
 
     private Integer mes;
 

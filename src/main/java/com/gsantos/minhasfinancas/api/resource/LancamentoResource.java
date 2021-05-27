@@ -3,30 +3,56 @@ package com.gsantos.minhasfinancas.api.resource;
 import com.gsantos.minhasfinancas.api.dto.LancamentoDTO;
 import com.gsantos.minhasfinancas.exception.RegraNegocioException;
 import com.gsantos.minhasfinancas.model.entity.Lancamento;
+import com.gsantos.minhasfinancas.model.entity.Usuario;
 import com.gsantos.minhasfinancas.model.enums.StatusLancamento;
 import com.gsantos.minhasfinancas.model.enums.TipoLancamento;
 import com.gsantos.minhasfinancas.service.LancamentoService;
 import com.gsantos.minhasfinancas.service.UsuarioService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/lancamentos")
+@RequiredArgsConstructor
 public class LancamentoResource {
 
-    private LancamentoService service;
-    private UsuarioService usuarioService;
+    private final LancamentoService service;
+    private final UsuarioService usuarioService;
 
-    @Autowired
-    public LancamentoResource(LancamentoService service) {
-        this.service = service;
+    @GetMapping
+    public ResponseEntity buscar(
+            @RequestParam(value = "descricao", required = false) String descricao,
+            @RequestParam(value = "mes", required = false) Integer mes,
+            @RequestParam(value = "ano", required = false) Integer ano,
+            @RequestParam("usuario") Long idUsuario
+    ){
+        Lancamento lancamentoFiltro = new Lancamento();
+        lancamentoFiltro.setDescricao(descricao);
+        lancamentoFiltro.setMes(mes);
+        lancamentoFiltro.setAno(ano);
+
+        Optional<Usuario> usuario = usuarioService.obterIdPorId(idUsuario);
+        if(usuario.isEmpty()){
+            return ResponseEntity.badRequest().body("Não foi possível realizar a consulta. Usuário não encontrado");
+        } else {
+          lancamentoFiltro.setUsuario(usuario.get());
+        }
+        List<Lancamento> lancamentos = service.buscar(lancamentoFiltro);
+        return ResponseEntity.ok(lancamentos);
     }
 
     @PostMapping
@@ -41,34 +67,51 @@ public class LancamentoResource {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity atualizar(@PathVariable Long id, @RequestBody LancamentoDTO dto) {
+    public ResponseEntity atualizar(@PathVariable("id") Long id, @RequestBody LancamentoDTO dto) {
         return service.obterPorId(id).map(entity -> {
-            try{
+            try {
                 Lancamento lancamento = converterParaLancamento(dto);
                 lancamento.setId(entity.getId());
                 service.atualizar(lancamento);
                 return ResponseEntity.ok(lancamento);
-            }
-            catch (RegraNegocioException e){
+            } catch (RegraNegocioException e) {
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
-        }).orElseGet( () -> new ResponseEntity("Lancamento não encontrado!", HttpStatus.BAD_REQUEST));
+        }).orElseGet(() -> new ResponseEntity("Lancamento não encontrado!", HttpStatus.BAD_REQUEST));
 
 
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity deletar(@PathVariable("id") Long id) {
+        return service.obterPorId(id).map(entidade -> {
+            service.deletar(entidade);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        }).orElseGet(() -> new ResponseEntity("Lancamento não encontrado!", HttpStatus.BAD_REQUEST));
+    }
 
-    private Lancamento converterParaLancamento(LancamentoDTO dto) {
-        return Lancamento.builder().
-                decricao(dto.getDescricao())
-                .id(dto.getId())
-                .status(StatusLancamento.valueOf(dto.getStatus()))
-                .ano(dto.getAno())
-                .mes(dto.getMes())
-                .valor(dto.getValor())
-                .usuario(usuarioService.obterIdPorId(dto.getUsuario())
-                        .orElseThrow(() -> new RegraNegocioException("Usuário não encontrado para o Id informado.")))
-                .tipo(TipoLancamento.valueOf(dto.getTipo())).build();
 
+    private Lancamento converterParaLancamento(final LancamentoDTO dto) {
+        Lancamento lancamento = new Lancamento();
+
+        lancamento.setId(dto.getId());
+        lancamento.setDescricao(dto.getDescricao());
+        lancamento.setAno(dto.getAno());
+        lancamento.setMes(dto.getMes());
+        lancamento.setValor(dto.getValor());
+
+        Usuario usuario = usuarioService.obterIdPorId(dto.getUsuario()).orElseThrow(() -> new RegraNegocioException("Usuário não encontrado!"));
+
+        lancamento.setUsuario(usuario);
+
+        if(dto.getTipo() != null){
+            lancamento.setTipo(TipoLancamento.valueOf(dto.getTipo()));
+        }
+
+        if(dto.getStatus() != null){
+            lancamento.setStatus(StatusLancamento.valueOf(dto.getStatus()));
+        }
+
+        return lancamento;
     }
 }
