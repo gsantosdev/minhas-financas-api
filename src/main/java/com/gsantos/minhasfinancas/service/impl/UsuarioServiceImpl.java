@@ -5,26 +5,23 @@ import com.gsantos.minhasfinancas.exception.RegraNegocioException;
 import com.gsantos.minhasfinancas.model.entity.Usuario;
 import com.gsantos.minhasfinancas.model.repository.UsuarioRepository;
 import com.gsantos.minhasfinancas.service.UsuarioService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
 
-    private UsuarioRepository repository;
-
-    public UsuarioServiceImpl(UsuarioRepository repository) {
-        this.repository = repository;
-    }
-
+    private final UsuarioRepository repository;
 
     @Override
     public Usuario autenticar(String email, String senha) {
         Optional<Usuario> usuario = repository.findByEmail(email);
 
-        if (!usuario.isPresent()) {
+        if (usuario.isEmpty()) {
             throw new ErroAutenticacao("Usuario não encontrado para o email informado.");
         }
 

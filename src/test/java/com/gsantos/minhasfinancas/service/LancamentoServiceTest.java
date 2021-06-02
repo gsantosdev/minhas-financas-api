@@ -8,13 +8,19 @@ import com.gsantos.minhasfinancas.model.repository.LancamentoRepository;
 import com.gsantos.minhasfinancas.model.repository.LancamentoRepositoryTest;
 import com.gsantos.minhasfinancas.service.impl.LancamentoServiceImpl;
 import org.assertj.core.api.Assertions;
+import org.hibernate.criterion.Example;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -91,6 +97,56 @@ public class LancamentoServiceTest {
         Assertions.catchThrowableOfType(() -> service.atualizar(lancamentoASalvar), NullPointerException.class);
 
         Mockito.verify(repository, Mockito.never()).save(lancamentoASalvar);
+    }
+
+
+    @Test
+    public void deveDeletarUmLancamento() {
+        //cenário
+        Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
+        lancamento.setId(1L);
+
+        //execucao
+        service.deletar(lancamento);
+
+        //verificacao
+        Mockito.verify(repository).delete(lancamento);
+    }
+
+
+    @Test
+    public void deveLancarErroAoDeletarUmLancamentoAindaNaoSalvo() {
+        //cenário
+        Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
+
+        //execucao
+        Assertions.catchThrowableOfType(() -> service.deletar(lancamento), NullPointerException.class);
+
+        //verificacao
+        Mockito.verify(repository, Mockito.never()).delete(lancamento);
+
+    }
+
+    @Test
+    public void deveFiltrarLancamentos() {
+        //cenário
+        Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
+        lancamento.setId(1L);
+
+        List<Lancamento> lista = Arrays.asList(lancamento);
+        Mockito.when(repository.findAll((Pageable) Mockito.any(Example.class))).thenReturn((Page<Lancamento>) lista);
+
+        //execucao
+        List<Lancamento> resultado = service.buscar(lancamento);
+
+        //verificacoes
+        Assertions
+                .assertThat(resultado)
+                .isNotEmpty()
+                .hasSize(1)
+                .contains(lancamento);
+
+
     }
 
 

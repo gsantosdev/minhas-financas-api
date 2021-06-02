@@ -4,8 +4,8 @@ import com.gsantos.minhasfinancas.api.dto.UsuarioDTO;
 import com.gsantos.minhasfinancas.exception.ErroAutenticacao;
 import com.gsantos.minhasfinancas.exception.RegraNegocioException;
 import com.gsantos.minhasfinancas.model.entity.Usuario;
+import com.gsantos.minhasfinancas.service.LancamentoService;
 import com.gsantos.minhasfinancas.service.UsuarioService;
-import com.gsantos.minhasfinancas.service.impl.LancamentoServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,16 +25,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsuarioResource {
 
-    private final LancamentoServiceImpl lancamentoService;
+    private final LancamentoService lancamentoService;
 
-    private final UsuarioService service;
+    private final UsuarioService usuarioService;
 
 
     @PostMapping("/autenticar")
     public ResponseEntity autenticar(@RequestBody UsuarioDTO dto) {
 
         try {
-            Usuario usuarioAutenticado = service.autenticar(dto.getEmail(), dto.getSenha());
+            Usuario usuarioAutenticado = usuarioService.autenticar(dto.getEmail(), dto.getSenha());
             return ResponseEntity.ok().body(usuarioAutenticado);
         } catch (ErroAutenticacao e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -53,7 +53,7 @@ public class UsuarioResource {
                 .build();
 
         try {
-            Usuario usuarioSalvo = service.salvarUsuario(usuario);
+            Usuario usuarioSalvo = usuarioService.salvarUsuario(usuario);
             return new ResponseEntity(usuarioSalvo, HttpStatus.CREATED);
         } catch (RegraNegocioException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -63,7 +63,7 @@ public class UsuarioResource {
 
     @GetMapping("{id}/saldo")
     public ResponseEntity obterSaldo(@PathVariable("id") Long id) {
-        Optional<Usuario> usuario = service.obterIdPorId(id);
+        Optional<Usuario> usuario = usuarioService.obterIdPorId(id);
 
         if (usuario.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
