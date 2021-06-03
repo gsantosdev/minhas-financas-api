@@ -74,14 +74,13 @@ public class LancamentoRepositoryTest {
 
 
     @Test
-    public void deveBuscarUmLancamentoPorId(){
+    public void deveBuscarUmLancamentoPorId() {
         Lancamento lancamento = criarUmLancamentoEPersistir();
 
         Optional<Lancamento> lancamentoEncontrado = repository.findById(lancamento.getId());
 
         assertThat(lancamentoEncontrado.isPresent()).isTrue();
     }
-
 
 
     private Lancamento criarUmLancamentoEPersistir() {

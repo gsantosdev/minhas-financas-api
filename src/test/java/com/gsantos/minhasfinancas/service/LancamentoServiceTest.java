@@ -153,7 +153,7 @@ public class LancamentoServiceTest {
     }
 
     @Test
-    public void deveAtualizarOStatusDeUmLancamento(){
+    public void deveAtualizarOStatusDeUmLancamento() {
         //cenário
         Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
         lancamento.setId(1L);
@@ -170,7 +170,7 @@ public class LancamentoServiceTest {
     }
 
     @Test
-    public void deveObterUmLancamentoPorID(){
+    public void deveObterUmLancamentoPorID() {
         //cenário
         Long id = 1L;
         Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
@@ -186,7 +186,7 @@ public class LancamentoServiceTest {
     }
 
     @Test
-    public void deveRetornarVazioQuandoOLancamentoNaoExiste(){
+    public void deveRetornarVazioQuandoOLancamentoNaoExiste() {
         //cenário
         Long id = 1L;
         Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
@@ -202,7 +202,7 @@ public class LancamentoServiceTest {
     }
 
     @Test
-    public void deveLancarErrosAoValidarUmLancamento(){
+    public void deveLancarErrosAoValidarUmLancamento() {
         //cenário
         Lancamento lancamento = new Lancamento();
 
