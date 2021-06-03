@@ -6,6 +6,7 @@ import com.gsantos.minhasfinancas.model.enums.StatusLancamento;
 import com.gsantos.minhasfinancas.model.enums.TipoLancamento;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -80,6 +81,8 @@ public class LancamentoRepositoryTest {
 
         assertThat(lancamentoEncontrado.isPresent()).isTrue();
     }
+
+
 
     private Lancamento criarUmLancamentoEPersistir() {
         Lancamento lancamento = criarLancamento();

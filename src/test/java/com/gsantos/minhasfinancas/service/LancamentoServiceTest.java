@@ -149,5 +149,22 @@ public class LancamentoServiceTest {
 
     }
 
+    @Test
+    public void deveAtualizarOStatusDeUmLancamento(){
+        //cenário
+        Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
+        lancamento.setId(1L);
+        lancamento.setStatus(StatusLancamento.PENDENTE);
+
+        StatusLancamento novoStatus = StatusLancamento.EFETIVADO;
+        Mockito.doReturn(lancamento).when(service).atualizar(lancamento);
+
+        //execucao
+        service.atualizarStatus(lancamento, novoStatus);
+
+        Assertions.assertThat(lancamento.getStatus()).isEqualTo(novoStatus);
+        Mockito.verify(service).atualizar(lancamento);
+    }
+
 
 }
