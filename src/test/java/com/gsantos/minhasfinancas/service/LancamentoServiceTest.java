@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -127,28 +128,6 @@ public class LancamentoServiceTest {
 
         //verificacao
         Mockito.verify(repository, Mockito.never()).delete(lancamento);
-
-    }
-
-    @Test
-    public void deveFiltrarLancamentos() {
-        //cenário
-        Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
-        lancamento.setId(1L);
-
-        List<Lancamento> lista = Arrays.asList(lancamento);
-        Mockito.when(repository.findAll((Pageable) Mockito.any(Example.class))).thenReturn((Page<Lancamento>) lista);
-
-        //execucao
-        List<Lancamento> resultado = service.buscar(lancamento);
-
-        //verificacoes
-        Assertions
-                .assertThat(resultado)
-                .isNotEmpty()
-                .hasSize(1)
-                .contains(lancamento);
-
 
     }
 
